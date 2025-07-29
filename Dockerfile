@@ -10,20 +10,19 @@ RUN apt-get update && apt-get install -y \
     graphviz-dev \
     gcc \
     g++ \
-    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV PIP_NO_CACHE_DIR=1
 ENV PYTHONDONTWRITEBYTECODE=1
+ENV PORT=8000
 
 # Copy requirements first for better caching
 COPY requirements.txt .
 
-# Install Python dependencies with proper PyTorch CPU support
+# Install Python dependencies with automatic version resolution
 RUN pip install --upgrade pip setuptools wheel && \
-    pip install torch==2.1.0 --extra-index-url https://download.pytorch.org/whl/cpu && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
@@ -35,11 +34,7 @@ RUN useradd --create-home --shell /bin/bash app && \
 USER app
 
 # Expose port
-EXPOSE 8000
+EXPOSE $PORT
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:$PORT/ || exit 1
-
-# Start command
-CMD ["gunicorn", "main:app", "--workers", "2", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--timeout", "300"]
+# Start command - optimized for Railway
+CMD gunicorn main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:${PORT} --timeout 600 --preload --worker-tmp-dir /dev/shm

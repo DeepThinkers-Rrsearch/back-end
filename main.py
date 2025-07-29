@@ -7,8 +7,17 @@ import logging
 import os
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
+
+# Log startup information
+logger.info(f"Starting {settings.app_name}")
+logger.info(f"Environment: {settings.environment}")
+logger.info(f"Debug mode: {settings.debug}")
+logger.info(f"Port: {settings.port}")
 
 app = FastAPI(
     title=settings.app_name,
@@ -30,6 +39,7 @@ app.add_middleware(
 async def health_check():
     """Health check endpoint"""
     try:
+        logger.info("Health check endpoint called")
         return HealthResponse(
             status="healthy",
             available_models=[model.value for model in ModelType]
@@ -109,6 +119,7 @@ if __name__ == "__main__":
     import uvicorn
     # Use Railway's PORT environment variable, fallback to 8000 for local development
     port = int(os.environ.get("PORT", 8000))
+    logger.info(f"Starting server on port {port}")
     uvicorn.run(
         app, 
         host="0.0.0.0", 

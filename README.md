@@ -105,10 +105,10 @@ If you encounter build timeout errors:
    - The project includes both `railway.toml` and `Dockerfile`
    - Railway will automatically detect and use Docker if Nixpacks fails
 
-3. **Optimize dependencies**:
-   - Uses CPU-only PyTorch for faster builds
-   - Specific dependency versions for stability
-   - Excluded unnecessary packages like Streamlit
+3. **Automatic version resolution**:
+   - Uses latest compatible package versions
+   - No version conflicts or pinned dependency issues
+   - Faster dependency resolution
 
 ## Configuration
 
@@ -119,7 +119,7 @@ The application uses the following configuration files:
 - `nixpacks.toml`: Nixpacks build optimization
 - `Procfile`: Process configuration (alternative)
 - `.env`: Environment variables (local development)
-- `requirements.txt`: Python dependencies
+- `requirements.txt`: Python dependencies (latest versions)
 
 ## Environment Variables
 
@@ -157,7 +157,7 @@ These are automatically included in the Railway deployment.
 
 ## Performance Optimizations
 
-- **CPU-only PyTorch**: Faster builds and smaller memory footprint
+- **Latest package versions**: Automatic version resolution for optimal compatibility
 - **Reduced workers**: 2 Gunicorn workers to optimize for Railway's memory limits
 - **Extended timeouts**: 300-second timeouts to handle ML model loading
 - **Build caching**: Optimized dependency installation order

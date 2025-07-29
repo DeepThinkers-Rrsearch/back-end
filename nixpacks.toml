@@ -4,7 +4,6 @@ nixPkgs = ["python39", "pip", "graphviz"]
 [phases.install]
 cmds = [
     "pip install --upgrade pip setuptools wheel",
-    "pip install torch==2.1.0 --extra-index-url https://download.pytorch.org/whl/cpu",
     "pip install --no-cache-dir -r requirements.txt"
 ]
 

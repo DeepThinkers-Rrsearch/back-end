@@ -3,9 +3,7 @@ builder = "NIXPACKS"
 buildCommand = "pip install --no-cache-dir -r requirements.txt"
 
 [deploy]
-startCommand = "gunicorn main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --timeout 300 --keep-alive 60"
-healthcheckPath = "/"
-healthcheckTimeout = 300
+startCommand = "gunicorn main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --timeout 600 --preload --log-level info --worker-tmp-dir /dev/shm"
 restartPolicyType = "ON_FAILURE"
 
 [environments.production.variables]
