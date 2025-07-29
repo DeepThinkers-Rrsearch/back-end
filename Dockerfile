@@ -1,25 +1,30 @@
-# Dockerfile
-
-# 1. Use a slim Python base image
+# Use an official, minimal Python runtime as a parent image
 FROM python:3.10-slim
 
-# 2. Set a working directory
+# Prevent Python from writing .pyc files and buffer stdout/stderr
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Set working directory inside the container
 WORKDIR /app
 
-# 3. Copy and install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install build dependencies (if you need to compile native extensions)
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends gcc \
+    && rm -rf /var/lib/apt/lists/*
 
-# 4. Copy the application code
+# Copy and install Python dependencies
+COPY requirements.txt .
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code
 COPY . .
 
-# 5. Expose the port (Railway injects $PORT at runtime)
+# Allow the port to be configured at build or runtime
 ARG PORT=8000
 EXPOSE ${PORT}
 
-# 6. Run with Gunicorn + Uvicorn worker
-CMD ["gunicorn", 
-     "-k", "uvicorn.workers.UvicornWorker", 
-     "main:app", 
-     "--bind", "0.0.0.0:${PORT}", 
-     "--workers", "1"]
+# Start the FastAPI application using Gunicorn with a Uvicorn worker
+# Shell form is used so $PORT is picked up from the environment at runtime
+CMD gunicorn -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT --workers 1
