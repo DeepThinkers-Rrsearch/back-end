@@ -1,23 +1,17 @@
+import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.core.config import settings
 from app.models.schemas import ConversionRequest, ConversionResponse, HealthResponse, ModelType
 from app.services.conversion_service import conversion_service
-from app.core.config import settings
-import logging
-import os
 
-# Configure logging
+# Configure root logger
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format="%(asctime)s - %(levelname)s - %(message)s"
 )
-logger = logging.getLogger(__name__)
-
-# Log startup information
-logger.info(f"Starting {settings.app_name}")
-logger.info(f"Environment: {settings.environment}")
-logger.info(f"Debug mode: {settings.debug}")
-logger.info(f"Port: {settings.port}")
+logger = logging.getLogger()
 
 app = FastAPI(
     title=settings.app_name,
@@ -26,7 +20,9 @@ app = FastAPI(
     debug=settings.debug
 )
 
-# CORS middleware for frontend communication
+logger.info(f"Starting {settings.app_name} in {settings.environment} mode")
+
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins,
@@ -34,19 +30,35 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
-
 @app.get("/", response_model=HealthResponse)
 async def health_check():
-    """Health check endpoint"""
+    """Health check endpoint for Railway deployment"""
     try:
         logger.info("Health check endpoint called")
-        return HealthResponse(
+        
+        # Basic health check
+        health_data = HealthResponse(
             status="healthy",
             available_models=[model.value for model in ModelType]
         )
+        
+        # Log successful health check
+        logger.info("Health check passed successfully")
+        return health_data
+        
     except Exception as e:
         logger.error(f"Health check failed: {e}")
-        raise HTTPException(status_code=500, detail="Service unavailable")
+        raise HTTPException(status_code=500, detail=f"Service unavailable: {str(e)}")
+
+@app.get("/health", response_model=HealthResponse)
+async def health_check_alt():
+    """Alternative health check endpoint"""
+    return await health_check()
+
+@app.get("/ping")
+async def ping():
+    """Simple ping endpoint for basic connectivity test"""
+    return {"status": "ok", "message": "pong"}
 
 @app.post("/api/v1/convert", response_model=ConversionResponse)
 async def convert_input(request: ConversionRequest):
@@ -115,15 +127,3 @@ async def get_available_models():
         ]
     }
 
-if __name__ == "__main__":
-    import uvicorn
-    # Use Railway's PORT environment variable, fallback to 8000 for local development
-    port = int(os.environ.get("PORT", 8000))
-    logger.info(f"Starting server on port {port}")
-    uvicorn.run(
-        app, 
-        host="0.0.0.0", 
-        port=port, 
-        reload=settings.debug,
-        log_level="info"
-    )

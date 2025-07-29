@@ -1,13 +1,6 @@
-streamlit
 torch
 numpy
-matplotlib
-pandas
-langchain-core 
-langgraph>0.2.27
 graphviz
-langchain-google-genai
-langchain
 fastapi
 uvicorn[standard]
 python-multipart

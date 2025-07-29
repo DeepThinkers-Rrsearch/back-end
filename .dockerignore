@@ -1,53 +1,6 @@
-# Python
 __pycache__/
-*.py[cod]
-*$py.class
-.pytest_cache/
-
-# Virtual environments
+*.pyc
 .env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-fyp-env/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Git
-.git/
-.gitignore
-
-# Documentation
-README.md
-*.md
-
-# Railway
-.railway/
-
-# Logs
-*.log
-
-# Appwrite (no longer needed)
-appwrite/
-
-# Development files
-.env.example
-
-# Docker files (to avoid copying into container)
-Dockerfile
-.dockerignore
-
-# Large files that might not be needed in production
-# (Uncomment if models should be excluded)
-# models/
+.git
+models/*.pkl
+models/*.pt
