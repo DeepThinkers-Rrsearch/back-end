@@ -1,0 +1,18 @@
+[phases.setup]
+nixPkgs = ["python39", "pip", "graphviz"]
+
+[phases.install]
+cmds = [
+    "pip install --upgrade pip setuptools wheel",
+    "pip install --no-cache-dir -r requirements.txt"
+]
+
+[phases.build]
+cmds = ["echo 'Build completed'"]
+
+[start]
+cmd = "gunicorn main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --timeout 300"
+
+[variables]
+PYTHONUNBUFFERED = "1"
+PIP_NO_CACHE_DIR = "1"

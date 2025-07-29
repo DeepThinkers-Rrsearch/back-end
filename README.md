@@ -29,7 +29,7 @@ The API will be available at `http://localhost:8000`
 
 ## Railway Deployment
 
-### Automatic Deployment
+### Option 1: Automatic Deployment (Recommended)
 
 1. **Connect to Railway**:
 
@@ -44,10 +44,24 @@ The API will be available at `http://localhost:8000`
    DEBUG=false
    ENVIRONMENT=production
    ALLOWED_ORIGINS=https://yourdomain.com
+   PYTHONUNBUFFERED=1
+   PIP_NO_CACHE_DIR=1
    ```
 
 3. **Deploy**:
    Railway will automatically detect the configuration and deploy your app.
+
+### Option 2: Docker Deployment (For Build Issues)
+
+If you encounter build timeout errors, use Docker deployment:
+
+1. **Enable Docker in Railway**:
+
+   - In your Railway project settings
+   - Go to "Build" section
+   - Select "Docker" as the build method
+
+2. **The Dockerfile will handle the build process automatically**
 
 ### Manual CLI Deployment
 
@@ -69,12 +83,41 @@ The API will be available at `http://localhost:8000`
    railway up
    ```
 
+## Troubleshooting Build Issues
+
+### Build Timeout Error
+
+If you encounter build timeout errors:
+
+1. **Use Docker deployment** (Option 2 above)
+2. **Check Railway build logs** for specific error messages
+3. **Ensure all files are committed** to your Git repository
+4. **Try reducing workers** in `railway.toml` if memory issues occur
+
+### Common Solutions
+
+1. **Clear Railway cache**:
+
+   - In Railway dashboard → Settings → General → Clear Build Cache
+
+2. **Use Docker for complex dependencies**:
+
+   - The project includes both `railway.toml` and `Dockerfile`
+   - Railway will automatically detect and use Docker if Nixpacks fails
+
+3. **Optimize dependencies**:
+   - Uses CPU-only PyTorch for faster builds
+   - Specific dependency versions for stability
+   - Excluded unnecessary packages like Streamlit
+
 ## Configuration
 
 The application uses the following configuration files:
 
 - `railway.toml`: Railway deployment configuration
-- `Procfile`: Process configuration (alternative to railway.toml)
+- `Dockerfile`: Docker deployment configuration
+- `nixpacks.toml`: Nixpacks build optimization
+- `Procfile`: Process configuration (alternative)
 - `.env`: Environment variables (local development)
 - `requirements.txt`: Python dependencies
 
@@ -111,3 +154,10 @@ The application includes pre-trained models in the `models/` directory:
 - Push Down Automata models
 
 These are automatically included in the Railway deployment.
+
+## Performance Optimizations
+
+- **CPU-only PyTorch**: Faster builds and smaller memory footprint
+- **Reduced workers**: 2 Gunicorn workers to optimize for Railway's memory limits
+- **Extended timeouts**: 300-second timeouts to handle ML model loading
+- **Build caching**: Optimized dependency installation order

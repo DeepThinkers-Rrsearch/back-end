@@ -1,11 +1,18 @@
 [build]
 builder = "NIXPACKS"
+buildCommand = "pip install --no-cache-dir -r requirements.txt"
 
 [deploy]
-startCommand = "gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT"
+startCommand = "gunicorn main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --timeout 300 --keep-alive 60"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
 
 [environments.production.variables]
 DEBUG = "false"
+PYTHONUNBUFFERED = "1"
+PIP_NO_CACHE_DIR = "1"
+
+# Railway deployment settings
+[settings]
+generateDomain = true
