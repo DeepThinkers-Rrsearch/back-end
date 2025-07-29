@@ -1,0 +1,9 @@
+/__pycache__
+/venv
+/.env
+/utils/__pycache__
+/utils/graphviz/__pycache__
+/fyp-env
+**/__pycache__/
+/.idea
+/app.py
