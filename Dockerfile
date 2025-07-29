@@ -1,27 +1,15 @@
-# Dockerfile
+# Use the Python 3 alpine official image
+# https://hub.docker.com/_/python
+FROM python:3-alpine
 
-# 1. Base image
-FROM python:3.10-slim
-
-# 2. Don't write .pyc files, and unbuffer stdout/stderr
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# 3. Working directory
+# Create and change to the app directory.
 WORKDIR /app
 
-# 4. Install Python dependencies
-COPY requirements.txt .
-RUN pip install --upgrade pip \
- && pip install --no-cache-dir -r requirements.txt
-
-# 5. Copy source code
+# Copy local code to the container image.
 COPY . .
 
-# 6. Create non-root user for security
-RUN useradd --create-home --shell /bin/bash app
-RUN chown -R app:app /app
-USER app
+# Install project dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# 7. Launch with Gunicorn + Uvicorn worker (Railway provides PORT env var)
-CMD ["sh", "-c", "gunicorn -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:${PORT:-8000} --workers 1"]
+# Run the web service on container startup.
+CMD ["hypercorn", "main:app", "--bind", "::"]
