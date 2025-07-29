@@ -1,35 +1,43 @@
-# Development files
-.env
-.env.local
-.env.example
-*.log
-.DS_Store
-Thumbs.db
-
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Python cache
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
 
-# Documentation
-README.md
-*.md
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+fyp-env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Git
 .git/
 .gitignore
 
-# Appwrite (no longer needed)
-appwrite/
+# Documentation
+README.md
+*.md
 
-# Development dependencies
-fyp-env/
-venv/
-.venv/
+# Logs
+*.log
+
+# Development files
+.env.example
+
+# Large model files that should be excluded if not needed
+# (Comment out if models are needed in production)
+# models/
