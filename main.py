@@ -4,6 +4,7 @@ from app.models.schemas import ConversionRequest, ConversionResponse, HealthResp
 from app.services.conversion_service import conversion_service
 from app.core.config import settings
 import logging
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -106,10 +107,12 @@ async def get_available_models():
 
 if __name__ == "__main__":
     import uvicorn
+    # Use Railway's PORT environment variable, fallback to 8000 for local development
+    port = int(os.environ.get("PORT", 8000))
     uvicorn.run(
         app, 
         host="0.0.0.0", 
-        port=8000, 
+        port=port, 
         reload=settings.debug,
         log_level="info"
     )

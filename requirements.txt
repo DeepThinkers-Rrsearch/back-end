@@ -12,3 +12,6 @@ fastapi
 uvicorn[standard]
 python-multipart
 pydantic
+pydantic-settings
+gunicorn
+python-dotenv
