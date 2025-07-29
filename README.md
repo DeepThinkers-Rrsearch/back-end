@@ -3,7 +3,7 @@
 ## Overview
 FastAPI ML backend for Automata Theory Conversions with 4 PyTorch models for DFA minimization, regex-to-ε-NFA, ε-NFA-to-DFA, and PDA conversions.
 
-## Railway Deployment
+## Railway Deployment (Docker)
 
 ### Required Environment Variables
 Set these in your Railway dashboard:
@@ -18,10 +18,11 @@ Set these in your Railway dashboard:
 - `HOST` - Default is "0.0.0.0"
 
 ### Deployment Files
-- `Procfile` - Gunicorn server configuration
-- `railway.toml` - Railway deployment settings
-- `nixpacks.toml` - Python build configuration
+- `Dockerfile` - Multi-stage Docker build optimized for production
+- `Procfile` - Gunicorn server configuration (backup)
+- `railway.toml` - Railway deployment settings configured for Docker
 - `.railwayignore` - Files to exclude from deployment
+- `.dockerignore` - Files to exclude from Docker build
 
 ### API Endpoints
 - `GET /` - Health check
@@ -34,8 +35,10 @@ Set these in your Railway dashboard:
 - ε-NFA-to-DFA  
 - PDA (Push Down Automata)
 
-### Production Settings
-- Uses gunicorn with 4 workers
-- UvicornWorker for async support
-- Health check timeout: 300s
-- Restart policy: ON_FAILURE with 10 max retries
+### Docker Configuration
+- Python 3.10 slim base image
+- System dependencies: graphviz, curl
+- Non-root user for security
+- Health checks every 30s
+- Gunicorn with 4 workers + UvicornWorker
+- Optimized layer caching for faster builds

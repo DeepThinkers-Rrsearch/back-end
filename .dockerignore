@@ -43,3 +43,11 @@ appwrite/
 
 # Development files
 .env.example
+
+# Docker files (to avoid copying into container)
+Dockerfile
+.dockerignore
+
+# Large files that might not be needed in production
+# (Uncomment if models should be excluded)
+# models/
