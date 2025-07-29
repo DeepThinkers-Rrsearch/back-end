@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     graphviz-dev \
     gcc \
     g++ \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables
@@ -20,8 +21,9 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Copy requirements first for better caching
 COPY requirements.txt .
 
-# Install Python dependencies
+# Install Python dependencies with proper PyTorch CPU support
 RUN pip install --upgrade pip setuptools wheel && \
+    pip install torch==2.1.0 --extra-index-url https://download.pytorch.org/whl/cpu && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
