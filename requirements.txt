@@ -6,5 +6,5 @@ uvicorn[standard]
 python-multipart
 pydantic
 pydantic-settings
-gunicorn
+hypercorn
 python-dotenv
