@@ -46,8 +46,11 @@ class ConversionService:
                 graph = dfa_output_to_dot(result)
                 
             elif model_type == ModelType.PDA:
-                result = predict_PDA_transitions(model, input_text)
-                graph = pda_output_to_dot(result)
+                transitions_list = predict_PDA_transitions(model, input_text)
+                # Convert list of transitions to single string for response
+                result = '\n'.join(transitions_list) if transitions_list else 'No valid transitions found'
+                # Use original list for graph generation
+                graph = pda_output_to_dot(transitions_list)
                 
             else:
                 raise ValueError(f"Unsupported model type: {model_type}")
