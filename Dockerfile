@@ -1,5 +1,5 @@
-# Use Python 3.10 slim base image for smaller size
-FROM python:3.10-slim
+# Use Python 3.9 slim base image for smaller size
+FROM python:3.9-slim
 
 # Set working directory
 WORKDIR /app
@@ -14,8 +14,10 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 
 # Install Python dependencies
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN mount=type=cache,target=/root/.cache/pip \
+    pip install --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r requirements.txt \
+    --extra-index-url https://download.pytorch.org/whl/cpu
 
 # Copy application code
 COPY . .
