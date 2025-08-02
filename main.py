@@ -80,7 +80,7 @@ async def convert_input(request: ConversionRequest):
         logger.info(f"Converting with {request.model_type.value}: {request.input_text[:50]}...")
         
         # Perform conversion
-        result, diagram_base64 = conversion_service.convert(
+        result, isAccepted = conversion_service.convert(
             request.input_text, 
             request.model_type
         )
@@ -90,7 +90,7 @@ async def convert_input(request: ConversionRequest):
         return ConversionResponse(
             success=True,
             result=result,
-            diagram_base64=diagram_base64
+            isAccepted=isAccepted
         )
         
     except ValueError as e:
