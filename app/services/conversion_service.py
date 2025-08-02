@@ -6,6 +6,7 @@ from utils.dfa_minimization import predict_dfa_minimization
 from utils.regex_to_epsilon_nfa import predict_regex_to_e_nfa
 from utils.e_nfa_to_dfa import predict_e_nfa_to_dfa
 from utils.push_down_automata import predict_PDA_transitions
+from utils.push_down_automata import simulate_pda
 from utils.graphviz.graphviz_regex_to_e_nfa import epsilon_nfa_to_dot
 from utils.graphviz.graphviz_minimized_dfa import minimized_dfa_to_dot
 from utils.graphviz.graphviz_dfa import dfa_output_to_dot
@@ -35,34 +36,41 @@ class ConversionService:
             # Perform conversion based on model type
             if model_type == ModelType.REGEX_TO_E_NFA:
                 result = predict_regex_to_e_nfa(input_text, model, stoi, itos)
-                graph = epsilon_nfa_to_dot(result)
+                #graph = epsilon_nfa_to_dot(result)
+                isAccepted = True
                 
             elif model_type == ModelType.DFA_MINIMIZATION:
                 result = predict_dfa_minimization(model, input_text)
-                graph = minimized_dfa_to_dot(result)
+                #graph = minimized_dfa_to_dot(result)
+                isAccepted = True
                 
             elif model_type == ModelType.E_NFA_TO_DFA:
                 result = predict_e_nfa_to_dfa(model, input_text)
-                graph = dfa_output_to_dot(result)
+                #graph = dfa_output_to_dot(result)
+                isAccepted = True
                 
             elif model_type == ModelType.PDA:
                 transitions_list = predict_PDA_transitions(model, input_text)
                 # Convert list of transitions to single string for response
                 result = '\n'.join(transitions_list) if transitions_list else 'No valid transitions found'
                 # Use original list for graph generation
-                graph = pda_output_to_dot(transitions_list)
+                #graph = pda_output_to_dot(transitions_list)
+                isAccepted = simulate_pda(input_text,transitions_list)
                 
             else:
                 raise ValueError(f"Unsupported model type: {model_type}")
             
             # Generate diagram and convert to base64
-            try:
-                png_bytes = graph.pipe(format="png")
-                diagram_base64 = base64.b64encode(png_bytes).decode('utf-8')
-            except Exception as e:
-                raise Exception(f"Failed to generate diagram: {str(e)}")
+            # try:
+            #     if(model_type!="PDA"):
+            #         png_bytes = graph.pipe(format="png")
+            #         diagram_base64 = base64.b64encode(png_bytes).decode('utf-8')
+            #     else:
+            #         diagram_base64 = graph
+            # except Exception as e:
+            #     raise Exception(f"Failed to generate diagram: {str(e)}")
             
-            return result, diagram_base64
+            return result, isAccepted
             
         except Exception as e:
             raise Exception(f"Conversion failed for {model_type.value}: {str(e)}")

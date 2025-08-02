@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
+import re
 from typing import List, Tuple, Optional
 
 # Define the vocabulary
@@ -561,3 +562,136 @@ def load_PDA_model(model_path: str, device: str = 'cpu') -> nn.Module:
     except Exception as e:
         print(f"Error loading model from {model_path}: {str(e)}")
         raise e
+    
+def simulate_pda(input_str: str, transitions: List[str]) -> bool:
+    """
+    Improved simulation of the PDA execution on an input string.
+
+    Args:
+        input_str: Input string
+        transitions: List of transition strings
+
+    Returns:
+        True if the PDA accepts the input, False otherwise
+    """
+    # Parse transitions into a more usable format
+    transition_dict = {}
+    for t in transitions:
+        pattern = r"delta\((\w+),\s*([\wε\&]),\s*(\w)\)\s*->\s*\((\w+),\s*(\w+)\)"
+        match = re.match(pattern, t)
+        if match:
+            from_state, input_symbol, stack_symbol, to_state, action = match.groups()
+            key = (from_state, input_symbol, stack_symbol)
+            value = (to_state, action)
+            transition_dict[key] = value
+
+    # Initialize PDA
+    state = 'q0'
+    stack = ['Z']  # Bottom of stack symbol
+    input_pos = 0
+
+    # Add epsilon to the end of input if not already present
+    if not input_str.endswith('ε'):
+        input_str = input_str + 'ε'
+
+    steps = []  # Track execution steps
+    input_consumed = False
+
+    # Simulate PDA execution
+    while True:
+        # Get current input symbol
+        if input_pos < len(input_str):
+            input_symbol = input_str[input_pos]
+        else:
+            # We've consumed the entire input
+            input_consumed = True
+            input_symbol = 'ε'
+
+        # Get top of stack
+        if stack:
+            stack_symbol = stack[-1]
+        else:
+            # Empty stack - can't continue
+            #logger.warning("Empty stack encountered, but no transition to handle it")
+            return False
+
+        # Look for a transition
+        key = (state, input_symbol, stack_symbol)
+
+        if key in transition_dict:
+            to_state, action = transition_dict[key]
+
+            # Record the step
+            steps.append((state, input_pos, input_symbol, stack.copy(), to_state, action))
+
+            # Update state
+            state = to_state
+
+            # Perform stack operation
+            if action == 'PUSH':
+                if input_symbol != 'ε':
+                    stack.append(input_symbol.upper())
+            elif action == 'POP':
+                if stack:
+                    stack.pop()
+                else:
+                    #logger.warning("Attempted to POP from empty stack")
+                    return False
+            # NOOP does nothing to the stack
+
+            # Move to next input symbol only if not an epsilon transition
+            if input_symbol != 'ε':
+                input_pos += 1
+
+            # Check if we've reached the final state
+            if state == 'qf' and (stack == ['Z'] or not stack):
+                print("PDA accepted the input!")
+                print("Execution steps:")
+                # for step in steps:
+                #     print(f"State: {step[0]}, Input: {step[2]} (pos {step[1]}), Stack: {step[3]} -> State: {step[4]}, Action: {step[5]}")
+                return True
+        else:
+            # Try epsilon transition
+            if input_symbol != 'ε':
+                epsilon_key = (state, 'ε', stack_symbol)
+                if epsilon_key in transition_dict:
+                    to_state, action = transition_dict[epsilon_key]
+                    steps.append((state, input_pos, 'ε', stack.copy(), to_state, action))
+                    state = to_state
+
+                    if action == 'PUSH':
+                        if input_symbol != 'ε':
+                            stack.append(input_symbol.upper())
+                    elif action == 'POP':
+                        if stack:
+                            stack.pop()
+                        else:
+                            #logger.warning("Attempted to POP from empty stack")
+                            return False
+
+                    if state == 'qf' and (stack == ['Z'] or not stack):
+                        print("PDA accepted the input!")
+                        print("Execution steps:")
+                        # for step in steps:
+                        #     print(f"State: {step[0]}, Input: {step[2]} (pos {step[1]}), Stack: {step[3]} -> State: {step[4]}, Action: {step[5]}")
+                        return True
+
+                    continue
+
+            # No valid transition found
+            print(f"No transition found for ({state}, {input_symbol}, {stack_symbol})")
+            return False
+
+        # Check for infinite loop
+        if len(steps) > 100:  # Arbitrary limit
+            print("Possible infinite loop detected in PDA simulation")
+            return False
+
+        # Check if we've consumed all input and reached a final state
+        if input_consumed and state == 'qf' and (stack == ['Z'] or not stack):
+            print("PDA accepted the input!")
+            print("Execution steps:")
+            # for step in steps:
+            #     print(f"State: {step[0]}, Input: {step[2]} (pos {step[1]}), Stack: {step[3]} -> State: {step[4]}, Action: {step[5]}")
+            return True
+        
