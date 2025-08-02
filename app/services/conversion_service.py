@@ -1,18 +1,44 @@
 import base64
 from typing import Tuple
+import logging
 from app.models.schemas import ModelType
 from app.services.model_service import model_service
-from utils.dfa_minimization import predict_dfa_minimization
-from utils.regex_to_epsilon_nfa import predict_regex_to_e_nfa
-from utils.e_nfa_to_dfa import predict_e_nfa_to_dfa
-from utils.push_down_automata import predict_PDA_transitions
 from utils.push_down_automata import simulate_pda
-from utils.graphviz.graphviz_regex_to_e_nfa import epsilon_nfa_to_dot
-from utils.graphviz.graphviz_minimized_dfa import minimized_dfa_to_dot
-from utils.graphviz.graphviz_dfa import dfa_output_to_dot
-from utils.graphviz.graphviz_pda import pda_output_to_dot
+
+logger = logging.getLogger(__name__)
 
 class ConversionService:
+    
+    def __init__(self):
+        logger.info("ConversionService initialized (prediction functions will load on demand)")
+    
+    def _lazy_import_prediction_functions(self):
+        """Import prediction functions only when needed to avoid startup delays"""
+        try:
+            global predict_dfa_minimization, predict_regex_to_e_nfa, predict_e_nfa_to_dfa, predict_PDA_transitions
+            global epsilon_nfa_to_dot, minimized_dfa_to_dot, dfa_output_to_dot, pda_output_to_dot
+            
+            from utils.dfa_minimization import predict_dfa_minimization
+            from utils.regex_to_epsilon_nfa import predict_regex_to_e_nfa
+            from utils.e_nfa_to_dfa import predict_e_nfa_to_dfa
+            from utils.push_down_automata import predict_PDA_transitions
+            from utils.graphviz.graphviz_regex_to_e_nfa import epsilon_nfa_to_dot
+            from utils.graphviz.graphviz_minimized_dfa import minimized_dfa_to_dot
+            from utils.graphviz.graphviz_dfa import dfa_output_to_dot
+            from utils.graphviz.graphviz_pda import pda_output_to_dot
+            
+            logger.info("Prediction and graphviz functions imported successfully")
+        except ImportError as e:
+            logger.error(f"Failed to import prediction functions: {e}")
+            raise
+    
+    def validate_input(self, input_text: str, model_type: ModelType) -> bool:
+        """Validate input without requiring heavy imports"""
+        if not input_text or not input_text.strip():
+            return False
+        if len(input_text.strip()) > 10000:  # Reasonable limit
+            return False
+        return True
     
     def convert(self, input_text: str, model_type: ModelType) -> Tuple[str, str]:
         """
@@ -28,6 +54,11 @@ class ConversionService:
         
         if not input_text or not input_text.strip():
             raise ValueError("Input text cannot be empty")
+            
+        # Import prediction functions lazily
+        self._lazy_import_prediction_functions()
+        
+        logger.info(f"Starting conversion for {model_type.value}")
             
         try:
             # Load the appropriate model
@@ -73,19 +104,8 @@ class ConversionService:
             return result, isAccepted
             
         except Exception as e:
+            logger.error(f"Conversion failed for {model_type.value}: {str(e)}")
             raise Exception(f"Conversion failed for {model_type.value}: {str(e)}")
-    
-    def validate_input(self, input_text: str, model_type: ModelType) -> bool:
-        """Validate input for specific model type"""
-        if not input_text or not input_text.strip():
-            return False
-            
-        # Add model-specific validation logic here if needed
-        # For now, basic validation
-        if len(input_text.strip()) > 10000:  # Prevent very large inputs
-            return False
-            
-        return True
 
-# Singleton instance
+# Create global instance
 conversion_service = ConversionService()
