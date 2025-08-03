@@ -491,17 +491,17 @@ def predict_PDA_transitions(model: nn.Module, input_str: str, device: str = 'cpu
         transitions.append(transition)
 
     # Filter out duplicates while preserving order
-    seen = set()
-    valid_transitions = []
+    # seen = set()
+    # valid_transitions = []
 
-    for t in transitions:
-        if t in seen:
-            continue
+    # for t in transitions:
+    #     if t in seen:
+    #         continue
 
-        valid_transitions.append(t)
-        seen.add(t)
+    #     valid_transitions.append(t)
+    #     seen.add(t)
 
-    return valid_transitions
+    return transitions
 
 # Function to load a trained model
 def load_PDA_model(model_path: str, device: str = 'cpu') -> nn.Module:
