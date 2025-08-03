@@ -10,8 +10,10 @@ class Settings(BaseSettings):
 
     # Model paths
     models_root: str = "./models"
-    dfa_minimization_model_path: str = "models/dfa_minimization/dfa_minimizer_transformer.pt"
-    dfa_minimization_tokenizer_path: str = "models/dfa_minimization/dfa_minimizer_tokenizer.pkl"
+    # dfa_minimization_model_path: str = "models/dfa_minimization/dfa_minimizer_transformer.pt"
+    # dfa_minimization_tokenizer_path: str = "models/dfa_minimization/dfa_minimizer_tokenizer.pkl"
+    dfa_minimization_model_path: str = "models/dfa_minimization/dfa_minimizer_10_new_transformer.pt"
+    dfa_minimization_tokenizer_path: str = "models/dfa_minimization/dfa_minimizer_10_new_tokenizer.pkl"
     regex_to_e_nfa_model_path: str = "models/regex_to_e_nfa/transformer_regex_to_e_nfa.pt"
     regex_to_e_nfa_tokenizer_path: str = "models/regex_to_e_nfa/regex_to_e_nfa_tokenizer.pkl"
     e_nfa_to_dfa_model_path: str = "models/e_nfa_to_dfa/transformer_model.pt"

@@ -138,7 +138,7 @@ def load_dfa_minimization_model(model_path,tokenizer_path):
 
 def predict_dfa_minimization(model, src_str, max_len=MAX_SEQ_LEN):
     model.eval()
-    tokenizer  = load_tokenizer("models/dfa_minimization/dfa_minimizer_tokenizer.pkl")
+    tokenizer  = load_tokenizer("models/dfa_minimization/dfa_minimizer_10_new_tokenizer.pkl")
     src_ids = torch.tensor(tokenizer.encode(src_str, max_len, add_special=False)).unsqueeze(0).to(DEVICE)
     tgt_ids = torch.full((1, max_len), tokenizer.stoi['<pad>'], dtype=torch.long).to(DEVICE)
     tgt_ids[0,0] = tokenizer.stoi['<sos>']
