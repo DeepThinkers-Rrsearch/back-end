@@ -1,6 +1,7 @@
 from graphviz import Digraph
 import re
 
+# To convert the output text to graphviz image
 def dfa_output_to_dot(model_output: str):
     # Parse the sections
     parts = {}

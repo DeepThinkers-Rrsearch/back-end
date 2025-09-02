@@ -15,6 +15,7 @@ def extract_e_nfa_text_from_image(image_bytes: bytes) -> str:
         max_retries=2,
     )
 
+    # Extract the text from the image
     message = HumanMessage(
         content=[
             {"type": "text", "text": extract_e_nfa_text_from_image_prompt},
