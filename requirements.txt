@@ -1,10 +1,7 @@
 torch
 numpy
-graphviz
 fastapi
 uvicorn[standard]
 python-multipart
 pydantic
 pydantic-settings
-hypercorn
-python-dotenv
