@@ -1,7 +1,7 @@
 import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-
+from google.cloud import storage
 from app.core.config import settings
 from app.models.schemas import ConversionRequest, ConversionResponse, HealthResponse, ModelType
 from app.services.conversion_service import conversion_service
@@ -11,6 +11,9 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
+
+
+
 logger = logging.getLogger()
 
 app = FastAPI(
