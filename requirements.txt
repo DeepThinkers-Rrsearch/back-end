@@ -1,7 +1,9 @@
 torch
 numpy
-fastapi
-uvicorn[standard]
+fastapi[standard]
 python-multipart
 pydantic
 pydantic-settings
+google-cloud-storage
+gunicorn
+uvicorn[standard]

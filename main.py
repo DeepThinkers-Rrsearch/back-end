@@ -71,6 +71,7 @@ async def convert_input(request: ConversionRequest):
         if not conversion_service.validate_input(request.input_text, request.model_type):
             return ConversionResponse(
                 success=False,
+                isAccepted=False,
                 error="Invalid input: Text cannot be empty or too long"
             )
         
@@ -94,6 +95,7 @@ async def convert_input(request: ConversionRequest):
         logger.warning(f"Validation error: {e}")
         return ConversionResponse(
             success=False,
+            isAccepted=False,
             error=f"Input validation failed: {str(e)}"
         )
         
@@ -101,6 +103,7 @@ async def convert_input(request: ConversionRequest):
         logger.error(f"Model file not found: {e}")
         return ConversionResponse(
             success=False,
+            isAccepted=False,
             error=f"Model not available: {str(e)}"
         )
         
@@ -108,6 +111,7 @@ async def convert_input(request: ConversionRequest):
         logger.error(f"Conversion error: {e}")
         return ConversionResponse(
             success=False,
+            isAccepted=False,
             error=f"Conversion failed: {str(e)}"
         )
 

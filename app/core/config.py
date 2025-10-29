@@ -10,21 +10,32 @@ class Settings(BaseSettings):
 
     # Model paths
     models_root: str = "./models"
+
     dfa_minimization_model_path: str = "models/dfa_minimization/dfa_minimizer_10_new_transformer.pt"
+    dfa_minimization_blob_model_path: str = "dfa_minimization/dfa_minimizer_10_new_transformer.pt"
     dfa_minimization_tokenizer_path: str = "models/dfa_minimization/dfa_minimizer_10_new_tokenizer.pkl"
+    dfa_minimization_blob_tokenizer_path: str = "dfa_minimization/dfa_minimizer_10_new_tokenizer.pkl"
+
     regex_to_e_nfa_model_path: str = "models/regex_to_e_nfa/transformer_regex_to_e_nfa.pt"
+    regex_to_e_nfa_blob_model_path: str = "regex_to_e_nfa/transformer_regex_to_e_nfa.pt"
     regex_to_e_nfa_tokenizer_path: str = "models/regex_to_e_nfa/regex_to_e_nfa_tokenizer.pkl"
+    regex_to_e_nfa_blob_tokenizer_path: str = "regex_to_e_nfa/regex_to_e_nfa_tokenizer.pkl"
+    
+
     e_nfa_to_dfa_model_path: str = "models/e_nfa_to_dfa/transformer_model.pt"
+    e_nfa_to_dfa_blob_model_path: str = "e_nfa_to_dfa/transformer_model.pt"
+    e_nfa_to_dfa_tokenizer_path: str = "models/e_nfa_to_dfa/e_nfa_to_dfa_tokenizer.pkl"
+    e_nfa_to_dfa_blob_tokenizer_path: str = "e_nfa_to_dfa/e_nfa_to_dfa_tokenizer.pkl"
+    
     pda_model_path: str = "models/pda/pda.pth"
+    pda_blob_model_path: str = "pda/pda.pth"
+    pda_tokenizer_path: str = "models/pda/pda_tokenizer.pkl"
+    pda_blob_tokenizer_path: str = "pda/pda_tokenizer.pkl"
 
     # CORS settings
     allowed_origins: List[str] = [
         origin.strip() for origin in os.getenv("ALLOWED_ORIGINS", "*").split(",")
     ]
-
-    # Railway specific settings
-    port: int = int(os.getenv("PORT", "8000") if os.getenv("PORT", "8000").isdigit() else "8000")
-    host: str = os.getenv("HOST", "0.0.0.0")
 
     class Config:
         env_file = ".env"
