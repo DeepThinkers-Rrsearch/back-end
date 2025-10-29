@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     debug: bool = os.getenv("DEBUG", "true").lower() in ("true", "1", "yes")
     api_v1_prefix: str = "/api/v1"
     environment: str = os.getenv("ENVIRONMENT", "development")
+    gcp_bucket_name: str = os.getenv("GCP_BUCKET_NAME", "")
 
     # Model paths
     models_root: str = "./models"

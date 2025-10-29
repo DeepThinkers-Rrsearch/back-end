@@ -4,8 +4,6 @@ import logging
 from app.core.config import settings
 from app.services.gcp_services import download_blob_if_needed
 
-BUCKET_NAME = "deep_thinkers-bcket"
-
 # Import model loading functions lazily to avoid startup delays
 logger = logging.getLogger(__name__)
 
@@ -54,8 +52,8 @@ class ModelService:
         
         try:
             if model_type == "DFA-Minimization":
-                download_blob_if_needed(BUCKET_NAME, settings.dfa_minimization_blob_model_path, settings.dfa_minimization_model_path)
-                download_blob_if_needed(BUCKET_NAME, settings.dfa_minimization_blob_tokenizer_path, settings.dfa_minimization_tokenizer_path)
+                download_blob_if_needed(settings.gcp_bucket_name, settings.dfa_minimization_blob_model_path, settings.dfa_minimization_model_path)
+                download_blob_if_needed(settings.gcp_bucket_name, settings.dfa_minimization_blob_tokenizer_path, settings.dfa_minimization_tokenizer_path)
                 
                 if not self._validate_model_path(settings.dfa_minimization_model_path):
                     raise FileNotFoundError(f"DFA model not found: {settings.dfa_minimization_model_path}")
@@ -70,8 +68,8 @@ class ModelService:
                 
             elif model_type == "Regex-to-ε-NFA":
                 
-                download_blob_if_needed(BUCKET_NAME, settings.regex_to_e_nfa_blob_model_path, settings.regex_to_e_nfa_model_path)
-                download_blob_if_needed(BUCKET_NAME, settings.regex_to_e_nfa_blob_tokenizer_path, settings.regex_to_e_nfa_tokenizer_path)
+                download_blob_if_needed(settings.gcp_bucket_name, settings.regex_to_e_nfa_blob_model_path, settings.regex_to_e_nfa_model_path)
+                download_blob_if_needed(settings.gcp_bucket_name, settings.regex_to_e_nfa_blob_tokenizer_path, settings.regex_to_e_nfa_tokenizer_path)
                 
                 if not self._validate_model_path(settings.regex_to_e_nfa_model_path):
                     raise FileNotFoundError(f"Regex model not found: {settings.regex_to_e_nfa_model_path}")
@@ -87,8 +85,8 @@ class ModelService:
                 return model, stoi, itos
                 
             elif model_type == "e_NFA-to-DFA":
-                download_blob_if_needed(BUCKET_NAME, settings.e_nfa_to_dfa_blob_model_path, settings.e_nfa_to_dfa_model_path)
-                download_blob_if_needed(BUCKET_NAME, settings.e_nfa_to_dfa_blob_tokenizer_path, settings.e_nfa_to_dfa_tokenizer_path)                
+                download_blob_if_needed(settings.gcp_bucket_name, settings.e_nfa_to_dfa_blob_model_path, settings.e_nfa_to_dfa_model_path)
+                download_blob_if_needed(settings.gcp_bucket_name, settings.e_nfa_to_dfa_blob_tokenizer_path, settings.e_nfa_to_dfa_tokenizer_path)                
                 
                 if not self._validate_model_path(settings.e_nfa_to_dfa_model_path):
                     raise FileNotFoundError(f"e-NFA model not found: {settings.e_nfa_to_dfa_model_path}")
@@ -99,8 +97,8 @@ class ModelService:
                 return model, None, None
                 
             elif model_type == "PDA":
-                download_blob_if_needed(BUCKET_NAME, settings.pda_blob_model_path, settings.pda_model_path)
-                download_blob_if_needed(BUCKET_NAME, settings.pda_blob_tokenizer_path, settings.pda_tokenizer_path)                
+                download_blob_if_needed(settings.gcp_bucket_name, settings.pda_blob_model_path, settings.pda_model_path)
+                download_blob_if_needed(settings.gcp_bucket_name, settings.pda_blob_tokenizer_path, settings.pda_tokenizer_path)                
                 
                 if not self._validate_model_path(settings.pda_model_path):
                     raise FileNotFoundError(f"PDA model not found: {settings.pda_model_path}")

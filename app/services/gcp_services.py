@@ -9,6 +9,10 @@ def download_blob_if_needed(bucket_name, source_blob_name, destination_file_name
     if os.path.exists(destination_file_name):
         logger.info(f"File already exists locally: {destination_file_name}")
         return
+        
+    # Create directory structure if it doesn't exist
+    os.makedirs(os.path.dirname(destination_file_name), exist_ok=True)
+    
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(source_blob_name)
