@@ -30,8 +30,7 @@ class Settings(BaseSettings):
     
     pda_model_path: str = "models/pda/pda.pth"
     pda_blob_model_path: str = "pda/pda.pth"
-    pda_tokenizer_path: str = "models/pda/pda_tokenizer.pkl"
-    pda_blob_tokenizer_path: str = "pda/pda_tokenizer.pkl"
+    
 
     # CORS settings
     allowed_origins: List[str] = [

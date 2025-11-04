@@ -98,7 +98,7 @@ class ModelService:
                 
             elif model_type == "PDA":
                 download_blob_if_needed(settings.gcp_bucket_name, settings.pda_blob_model_path, settings.pda_model_path)
-                download_blob_if_needed(settings.gcp_bucket_name, settings.pda_blob_tokenizer_path, settings.pda_tokenizer_path)                
+                              
                 
                 if not self._validate_model_path(settings.pda_model_path):
                     raise FileNotFoundError(f"PDA model not found: {settings.pda_model_path}")
