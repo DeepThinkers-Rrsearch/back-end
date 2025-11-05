@@ -15,7 +15,7 @@ class ConversionRequest(BaseModel):
 class ConversionResponse(BaseModel):
     success: bool
     result: Optional[str] = None
-    isAccepted: bool
+    isAccepted: Optional[bool] = None
     # diagram_base64: Optional[str] = None
     error: Optional[str] = None
 

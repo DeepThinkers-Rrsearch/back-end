@@ -1,10 +1,9 @@
 torch
 numpy
-graphviz
-fastapi
-uvicorn[standard]
+fastapi[standard]
 python-multipart
 pydantic
 pydantic-settings
-hypercorn
-python-dotenv
+google-cloud-storage
+gunicorn
+uvicorn[standard]

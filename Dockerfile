@@ -1,28 +1,23 @@
-# Use the Python 3.11 slim official image for better compatibility with ML libraries
-# https://hub.docker.com/_/python
+# Use a slim Python base image
 FROM python:3.11-slim
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Install system dependencies required for some Python packages
-RUN apt-get update && apt-get install -y \
-    graphviz \
-    libgraphviz-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create and change to the app directory.
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy requirements first for better Docker layer caching
+# Copy requirements and install dependencies
 COPY requirements.txt .
-
-# Install project dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy local code to the container image.
+# Copy the rest of the application code
 COPY . .
 
-# Run the web service on container startup.
-CMD ["hypercorn", "main:app", "--bind", "0.0.0.0:8000"]
+
+# Expose port 8080 for Cloud Run
+EXPOSE 8080
+
+# Set environment variables
+ENV PORT=8080
+ENV PYTHONPATH=/app
+
+# Start FastAPI app using Gunicorn with Uvicorn worker
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "-k", "uvicorn.workers.UvicornWorker", "--timeout", "120", "--workers", "1", "main:app"]
